@@ -3,15 +3,17 @@
 
 int main(int argc , char *argv[])
 {
-    if(argc <= 1)
+    if(argc <= 2)
     {
-        cerr << "usage : " << argv[0] << " [encode_file]" << endl ;
+        cerr << "usage : " << argv[0] << " [encode_file] [output_file]" << endl ;
         return -1 ;
     }
     ifstream ori_file(argv[1] , ios::binary) ;
-    if(!ori_file)
+    ofstream out_file(argv[2] , ios::binary) ;
+    if(!ori_file || !out_file)
     {
-        cerr << "failed to open file named '" << argv[1] << "'" << endl ;
+        cerr << "failed to open file named '" << argv[1] << "' or '"
+             << argv[2] <<"'" << endl ;
         return -1 ;
     }
     
@@ -23,11 +25,12 @@ int main(int argc , char *argv[])
     {
         unsigned char ori_code = (unsigned char) read_char ;
         //cout << (int)ori_code << endl ; 
-        encode(ori_code , inner_data , cout) ;
+        encode(ori_code , inner_data , out_file) ;
     }
-    encode(EOF_CODE ,inner_data , cout ) ;
+    encode(EOF_CODE ,inner_data , out_file ) ;
     delete inner_data ;
     ori_file.close() ;
+    out_file.close() ;
     return 0 ;
 }
 
@@ -49,7 +52,8 @@ void output_coding_rst(Inner_coding_t *inner_coding_data , ostream &fs)
 {
     data_t rst = inner_coding_data->interval_range[0] + inner_coding_data->interval_len/2 ;
     
-    fs << rst << endl ;
+    //fs << rst << endl ;
+    fs.write((char *)&rst , sizeof(rst)) ;
 }
 /**
     end a encode progress

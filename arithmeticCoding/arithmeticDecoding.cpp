@@ -12,17 +12,33 @@ bool decode(data_t read_data , Inner_coding_t * inner_data , ostream &os) ;
 
 int main(int argc , char *argv[])
 {
+    if(argc < 3)
+    {
+        cerr << "usage : " << argv[0] << " [bz file] [output_file]" << endl ;
+        return -1 ;
+    }
+    ifstream bz_file(argv[1] , ios::binary) ;
+    ofstream out_file(argv[2] , ios::binary) ;
+    if(!bz_file || !out_file)
+    {
+        cerr << "failed to open file named '" << argv[1] <<"' or '" 
+             << argv[2] << "'" << endl ;
+        return -1 ;
+    }
     Inner_coding_t * inner_data = new Inner_coding_t ;
     init_inner_coding_data(inner_data) ;
+    
 
     data_t read_data ;
-   
-    while( cin >> read_data)
+    
+    while( bz_file.read((char *)&read_data , sizeof(read_data)))
     {
-        decode(read_data , inner_data , cout) ;
+        decode(read_data , inner_data , out_file) ;
     }
    
     delete inner_data ;
+    out_file.close() ;
+    bz_file.close() ;
     return 0 ;
 }
 /**

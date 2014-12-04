@@ -6,17 +6,22 @@
   */
 void normalize_inner_coding_data(Inner_coding_t *inner_coding_data)
 {
-    // get the rate to update the char_freq
-    double update_rate = UPDATE_TOTAL_FREQ_MAX / (double)inner_coding_data->total_freq ;   
-    //update char_freq 
-    unsigned freq_sum = 0 ;
-    for(unsigned i = 0 ; i < MAX_CHAR_NUM ; ++i)
+    //cerr << "update" << endl ;
+    if(inner_coding_data->total_freq > INIT_INTERVAL_MAX_VAL >> 2)
     {
-        inner_coding_data->char_freq[i] = (data_t)ceil(inner_coding_data->char_freq[i] * update_rate) ;
-        freq_sum += inner_coding_data->char_freq[i] ;
+        cerr << "update inner_coding" << endl ;
+        // get the rate to update the char_freq
+        double update_rate = 1/8 ;   
+        //update char_freq 
+        data_t freq_sum = 0 ;
+        for(unsigned i = 0 ; i < MAX_CHAR_NUM ; ++i)
+        {
+            inner_coding_data->char_freq[i] = (data_t)ceil(inner_coding_data->char_freq[i] * update_rate) ;
+            freq_sum += inner_coding_data->char_freq[i] ;
+        }
+        //update total freq
+        inner_coding_data->total_freq = freq_sum ;
     }
-    //update total freq
-    inner_coding_data->total_freq = freq_sum ;
     //update max
     update_max_freq_ite(inner_coding_data) ;
     //update interval range
@@ -25,13 +30,13 @@ void normalize_inner_coding_data(Inner_coding_t *inner_coding_data)
 }
 
 /**
-update the interval range [ length ] ;
-and set the interval [ range ]
-*/
+  update the interval range [ length ] ;
+  and set the interval [ range ]
+ */
 void update_interval_range(Inner_coding_t * inner_data , unsigned long long low , unsigned long long high)
 {
     //total range [low , high )
-        //update the length
+    //update the length
     inner_data->interval_len = high - low ; 
     double interval = inner_data->interval_len / (double)inner_data->total_freq ;
     inner_data->interval_range[0] = low ;

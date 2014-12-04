@@ -1,7 +1,9 @@
 #ifndef INNER_CODING_STRUCT
 #define INNER_CODING_STRUCT
 
+#include <iostream>
 #include <cmath>
+using namespace std ;
 
 #define data_t unsigned long long 
 const unsigned int MAX_CHAR_NUM = 257U ; // 256 chars + 1 EOF
